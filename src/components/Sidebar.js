@@ -1,4 +1,5 @@
 import Link from "next/link";
+import('../../public/assets/css/demo.css')
 
 export default function Sidebar() {
   return (
@@ -16,14 +17,17 @@ export default function Sidebar() {
             <div>Dashboard</div>
           </Link>
         </li>
+        <li className="menu-header small text-uppercase">
+              <span className="menu-header-text">Menu</span>
+        </li>
         <li className="menu-item">
-          <Link href="/notifications" className="menu-link">
+          <Link href="/notification" className="menu-link">
             <i className="bx bx-bell me-1"></i>
             <div>Notificações</div>
           </Link>
         </li>
         <li className="menu-item">
-          <Link href="/connections" className="menu-link">
+          <Link href="/conection" className="menu-link">
             <i className="menu-icon tf-icons bx bx-cube-alt"></i>
             <div>Conexão</div>
           </Link>

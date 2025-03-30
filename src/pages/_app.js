@@ -23,8 +23,8 @@ export default function App({ Component, pageProps }) {
       import('../../public/assets/vendor/css/theme-default.css'),
       import('../../public/assets/vendor/css/core.css'),
       import("../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"),
-      import("../../public/assets/vendor/libs/apex-charts/apex-charts.css")
-      
+      import("../../public/assets/vendor/libs/apex-charts/apex-charts.css"),
+      import("../../public/assets/js/dashboards-analytics.js")
     ])
     .then(() => console.log('Todos os arquivos carregados com sucesso!'))
     .catch(err => console.error('Erro ao carregar arquivos:', err));
