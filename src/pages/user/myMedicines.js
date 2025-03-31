@@ -1,9 +1,10 @@
 import Head from "next/head";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import NotificationsContent from "../components/NotificationsContent";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import Medicines from "../../components/Medicines";
+import withAuth from "../../utils/withAuth"; 
 
-export default function Profile() {
+function MyMedicines() {
   return (
     <>
       <Head>
@@ -16,10 +17,12 @@ export default function Profile() {
           <Sidebar />
           <div className="layout-page">
             <Navbar />
-            <NotificationsContent />
+            <Medicines />
           </div>
         </div>
       </div>
     </>
   );
 }
+
+export default withAuth(MyMedicines);

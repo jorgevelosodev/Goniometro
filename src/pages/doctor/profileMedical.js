@@ -1,14 +1,14 @@
 import Head from "next/head";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import ConnectionContent from "../components/ConnectionContent";
-import withAuth from "../utils/withAuth";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import SettingsMedical from "../../components/settingsMedical";
+import withAuth from "../../utils/withAuth";
 
-function Conection() {
+function ProfileMedical() {
   return (
     <>
       <Head>
-        <title>Medir com goniômetro</title>
+        <title>Perfil Médico</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
@@ -17,7 +17,7 @@ function Conection() {
           <Sidebar />
           <div className="layout-page">
             <Navbar />
-            <ConnectionContent />
+            <SettingsMedical />
           </div>
         </div>
       </div>
@@ -25,4 +25,4 @@ function Conection() {
   );
 }
 
-export default withAuth(Conection);
+export default withAuth(ProfileMedical)

@@ -1,9 +1,10 @@
 import Head from "next/head";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import ProfileContent from "../components/ProfileContent";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import ProfileContent from "../../components/ProfileContent";
+import withAuth from "../../utils/withAuth";
 
-export default function Profile() {
+function Profile() {
   return (
     <>
       <Head>
@@ -23,3 +24,5 @@ export default function Profile() {
     </>
   );
 }
+
+export default withAuth(Profile)

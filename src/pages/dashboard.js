@@ -1,17 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import Image from "next/image";
-import('../../public/assets/css/demo.css')
-import("../../public/assets/vendor/fonts/boxicons.css");
+import Link from "next/link";
+import withAuth from "../utils/withAuth"; // Importando o HOC
 
-export default function Dashboard() {
-
+function Dashboard() {
+  const [tipoUsuario, setTipoUsuario] = useState(null);
+  const [usuario, setUsuario] = useState(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
+    const userData = JSON.parse(localStorage.getItem("usuario"));
+    setUsuario(userData);
+    
+    if (userData) {
+      setTipoUsuario(userData.nivelacesso);
+    }
   }, []);
 
   return (
@@ -36,8 +43,8 @@ export default function Dashboard() {
                       <div className="d-flex align-items-end row" style={{ height: "164px" }}>
                         <div className="col-sm-7">
                           <div className="card-body">
-                            <h5 className="card-title text-primary">Seja Bem-vindo John</h5>
-                            <p className="mb-4">Olá seja Bem-vindo</p>
+                            <h5 className="card-title text-primary">Seja Bem-vindo {usuario?.nome || "Usuário"}!</h5>
+                            <p className="mb-4">Olá, seja bem-vindo!</p>
                           </div>
                         </div>
                         <div className="col-sm-5 text-center">
@@ -47,34 +54,48 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="col-12 col-lg-12 order-2 mb-4" >
+                  <div className="col-12 col-lg-12 order-2 mb-4">
                     <div className="card">
-                      <div className="row row-bordered g-0">
-                        <div className="col-md-8" style={{ height: "570px !important" }}>
-                          <h5 className="card-header m-0 me-2 pb-3">Relatório Anual</h5>
-                      
-      {isClient ? <div id="totalRevenueChart" className="px-2"></div> : <p>Carregando...</p>}
-  
-                        </div>
-                        <div className="col-md-4">
-                          <div className="card-body">
-                            <div className="text-center" style={{ marginTop: "90px !important" }}>
-                              <div className="dropdown">
-                                <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button">
-                                  2025
-                                </button>
-                                <div className="dropdown-menu dropdown-menu-end">
-                                  <a className="dropdown-item" href="#">2025</a>
-                                  <a className="dropdown-item" href="#">2024</a>
-                                  <a className="dropdown-item" href="#">2023</a>
-                                </div>
+                      <div className="row row-bordered g-0" style={{ marginTop: "40px" }}>
+                        <div className="row">
+                          {/* Opções comuns para médicos e pacientes */}
+                          <div className="col-md-4">
+                            <div className="card text-center">
+                              <div className="card-body">
+                                <h5 className="card-title">Minhas Medições</h5>
+                                <p className="card-text">Veja o histórico de medições.</p>
+                                <Link href="/user/myMedicines" className="btn btn-primary">Acessar</Link>
                               </div>
                             </div>
                           </div>
-                         
-      {isClient ? <div id="growthChart"></div> : <p>Carregando...</p>}
 
-                          <div className="text-center fw-semibold pt-3 mb-2">A sua limitação funcional está a 78%</div>
+                          <div className="col-md-4">
+                            <div className="card text-center">
+                              <div className="card-body">
+                                <h5 className="card-title">Nova Medição</h5>
+                                <p className="card-text">Registre uma nova medição.</p>
+                                <Link href="/conection" className="btn btn-primary">Medir</Link>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Opções exclusivas para Médicos */}
+                          {tipoUsuario && tipoUsuario === "medico" && (
+                            <div className="col-md-4">
+                              <div className="card text-center">
+                                <div className="card-body">
+                                  <h5 className="card-title">Pacientes</h5>
+                                  <p className="card-text">Gerencie seus pacientes.</p>
+                                  <Link href="/doctor/userList" className="btn btn-primary">Acessar</Link>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="text-center" style={{ marginRight: "45%", marginTop: "2%", paddingBottom: "4%" }}>
+                          {isClient ? <div id="growthChart"></div> : <p>Carregando...</p>}
+                          <div className="fw-semibold pt-3 mb-2">A sua limitação funcional está a 78%</div>
                         </div>
                       </div>
                     </div>
@@ -90,3 +111,6 @@ export default function Dashboard() {
     </>
   );
 }
+
+
+export default withAuth(Dashboard);

@@ -1,20 +1,15 @@
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfileContent() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Doe",
+    name: "John",
     email: "john.doe@example.com",
-    organization: "ThemeSelection",
     phoneNumber: "",
-    address: "",
-    state: "",
-    zipCode: "",
-    country: "",
-    language: "",
-    timeZones: "",
-    currency: "",
+    idade: "",
+    password: "",
     accountDeactivation: false
   });
 
@@ -29,8 +24,20 @@ export default function ProfileContent() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert("Formulário enviado!");
+    toast.success("Informações atualizadas com sucesso!");
   };
+
+  const handleDeactivateAccount = (event) => {
+    event.preventDefault();
+    if (!formData.accountDeactivation) {
+      toast.error("Você deve marcar o checkbox para confirmar a desativação.");
+      return;
+    }
+    toast.warning("Conta desativada com sucesso!");
+  };
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <div className="content-wrapper">
@@ -78,35 +85,65 @@ export default function ProfileContent() {
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="mb-3 col-md-6">
-                      <label htmlFor="firstName" className="form-label">First Name</label>
-                      <input className="form-control" type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} autoFocus />
+                      <label htmlFor="name" className="form-label">Nome completo</label>
+                      <input className="form-control" type="text" id="name" name="name" value={formData.name} onChange={handleChange} autoFocus />
                     </div>
-                    <div className="mb-3 col-md-6">
-                      <label htmlFor="lastName" className="form-label">Last Name</label>
-                      <input className="form-control" type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} />
-                    </div>
+
                     <div className="mb-3 col-md-6">
                       <label htmlFor="email" className="form-label">E-mail</label>
                       <input className="form-control" type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
                     </div>
                     <div className="mb-3 col-md-6">
-                      <label htmlFor="organization" className="form-label">Organization</label>
-                      <input className="form-control" type="text" id="organization" name="organization" value={formData.organization} onChange={handleChange} />
-                    </div>
-                    <div className="mb-3 col-md-6">
-                      <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
-                      <input className="form-control" type="text" id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="202 555 0111" />
+                      <label htmlFor="phoneNumber" className="form-label">Telefone</label>
+                      <input className="form-control" type="text" id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="+244 9XXXXXXXX" />
                     </div>
 
                     <div className="mb-3 col-md-6">
-                      <label htmlFor="country" className="form-label">Country</label>
-                      <select id="country" name="country" className="form-select" value={formData.country} onChange={handleChange}>
-                        <option value="">Select</option>
-                        <option value="Brazil">Brazil</option>
-                        <option value="United States">United States</option>
-                        <option value="Canada">Canada</option>
-                      </select>
+                      <label htmlFor="idade" className="form-label">Idade</label>
+                      <input className="form-control" type="number" id="idade" name="idade" value={formData.idade} onChange={handleChange} placeholder="18" />
                     </div>
+
+                    <div className="mb-3 col-md-6">
+                    <label className="form-label" htmlFor="password">Password</label>
+                    <div className="input-group input-group-merge">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        className="form-control"
+                        placeholder="••••••••"
+                        value={formData.password}
+                      />
+                      <span
+                        className="input-group-text cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i className={showPassword ? "bx bx-show" : "bx bx-hide"}></i>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Confirmar Senha */}
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label" htmlFor="confirm-password">Confirm Password</label>
+                    <div className="input-group input-group-merge">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        id="confirm-password"
+                        className="form-control"
+                        placeholder="••••••••"
+                      />
+                      <span
+                        className="input-group-text cursor-pointer"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i className={showConfirmPassword ? "bx bx-show" : "bx bx-hide"}></i>
+                      </span>
+                    </div>
+                  </div>
+
+                    
                   </div>
 
                   <div className="mt-2">
@@ -126,7 +163,7 @@ export default function ProfileContent() {
                     <p className="mb-0">Depois que você excluir sua conta, não há como voltar atrás. Por favor, tenha certeza.</p>
                   </div>
                 </div>
-                <form>
+                <form onSubmit={handleDeactivateAccount}>
                   <div className="form-check mb-3">
                     <input className="form-check-input" type="checkbox" id="accountActivation" name="accountDeactivation" checked={formData.accountDeactivation} onChange={handleChange} />
                     <label className="form-check-label" htmlFor="accountActivation">
@@ -142,6 +179,8 @@ export default function ProfileContent() {
         </div>
       </div>
       <div className="content-backdrop fade"></div>
+      <ToastContainer />
     </div>
+    
   );
 }

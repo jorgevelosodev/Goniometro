@@ -275,9 +275,9 @@
   const growthChartEl = document.querySelector('#growthChart'),
     growthChartOptions = {
       series: [78],
-      labels: ['Growth'],
+      labels: [''],
       chart: {
-        height: 240,
+        height: 350,
         type: 'radialBar'
       },
       plotOptions: {

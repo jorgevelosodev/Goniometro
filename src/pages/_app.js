@@ -3,6 +3,8 @@ import '@/styles/globals.css';
 import 'aos/dist/aos.css';
 import { useEffect } from 'react';
 import AOS from 'aos';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
@@ -30,5 +32,6 @@ export default function App({ Component, pageProps }) {
     .catch(err => console.error('Erro ao carregar arquivos:', err));
   }, []);
 
+  <ToastContainer position="top-right" autoClose={3000} />
   return <Component {...pageProps} />;
 }
