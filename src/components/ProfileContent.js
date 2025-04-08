@@ -10,7 +10,6 @@ export default function ProfileContent() {
     phoneNumber: "",
     idade: "",
     password: "",
-    accountDeactivation: false
   });
 
   const handleFileChange = (event) => {
@@ -27,14 +26,6 @@ export default function ProfileContent() {
     toast.success("Informações atualizadas com sucesso!");
   };
 
-  const handleDeactivateAccount = (event) => {
-    event.preventDefault();
-    if (!formData.accountDeactivation) {
-      toast.error("Você deve marcar o checkbox para confirmar a desativação.");
-      return;
-    }
-    toast.warning("Conta desativada com sucesso!");
-  };
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -153,28 +144,6 @@ export default function ProfileContent() {
                 </form>
               </div>
             </div>
-
-            <div className="card">
-              <h5 className="card-header">Excluir conta</h5>
-              <div className="card-body">
-                <div className="mb-3 col-12 mb-0">
-                  <div className="alert alert-warning">
-                    <h6 className="alert-heading fw-bold mb-1">Tem certeza de que deseja excluir sua conta?</h6>
-                    <p className="mb-0">Depois que você excluir sua conta, não há como voltar atrás. Por favor, tenha certeza.</p>
-                  </div>
-                </div>
-                <form onSubmit={handleDeactivateAccount}>
-                  <div className="form-check mb-3">
-                    <input className="form-check-input" type="checkbox" id="accountActivation" name="accountDeactivation" checked={formData.accountDeactivation} onChange={handleChange} />
-                    <label className="form-check-label" htmlFor="accountActivation">
-                      Confirmo a desativação da minha conta
-                    </label>
-                  </div>
-                  <button type="submit" className="btn btn-danger deactivate-account">Desativar conta</button>
-                </form>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase"; // Ajuste o caminho conforme necessário
+import { supabase } from "../lib/supabase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,7 +17,6 @@ export default function SettingsMedical() {
     accountDeactivation: false,
   });
 
-  // 🟢 Carregar os dados do usuário ao abrir a página
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     if (usuario) {
@@ -42,13 +41,11 @@ export default function SettingsMedical() {
     setFormData(data);
   };
 
-  // 🔄 Atualizar estado dos inputs
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
-  // 📤 Upload da imagem para o Supabase Storage
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file || !userId) return;
@@ -68,7 +65,6 @@ export default function SettingsMedical() {
       return;
     }
 
-    // 📝 Atualizar URL da imagem no banco
     const { error: updateError } = await supabase
       .from("usuarios")
       .update({ foto: filePath })
@@ -85,7 +81,6 @@ export default function SettingsMedical() {
     setUploading(false);
   };
 
-  // 💾 Atualizar dados do usuário no Supabase
   const handleSubmit = async (event) => {
     event.preventDefault();
     const { error } = await supabase
@@ -93,7 +88,7 @@ export default function SettingsMedical() {
       .update({
         nome: formData.nome,
         email: formData.email,
-        specialty: formData.specialty,
+        especialidade: formData.especialidade,
         telefone: formData.telefone,
         clinicAddress: formData.clinicAddress,
       })
@@ -106,6 +101,19 @@ export default function SettingsMedical() {
       toast.success("Perfil atualizado com sucesso!");
     }
   };
+
+  const handleDeactivateAccount = (event) => {
+      event.preventDefault();
+      if (!formData.accountDeactivation) {
+        toast.error("Você deve marcar o checkbox para confirmar a desativação.");
+        return;
+      }
+      toast.warning("Conta desativada com sucesso!");
+    };
+
+  const fotoUrl = formData.foto
+    ? supabase.storage.from("imagens").getPublicUrl(formData.foto).data.publicUrl
+    : "../assets/img/avatars/1.png";
 
   return (
     <div className="content-wrapper">
@@ -126,7 +134,7 @@ export default function SettingsMedical() {
               <div className="card-body">
                 <div className="d-flex align-items-start align-items-sm-center gap-4">
                   <img
-                    src={formData.foto ? supabase.storage.from("usuarios").getPublicUrl(formData.foto).data.publicUrl : "../assets/img/avatars/1.png"}
+                    src={fotoUrl}
                     alt="doctor-avatar"
                     className="d-block rounded"
                     height="100"
@@ -135,7 +143,13 @@ export default function SettingsMedical() {
                   <div className="button-wrapper">
                     <label htmlFor="upload" className="btn btn-primary me-2 mb-4">
                       <span className="d-none d-sm-block">Carregar nova foto</span>
-                      <input type="file" id="upload" hidden accept="image/png, image/jpeg" onChange={handleFileChange} />
+                      <input
+                        type="file"
+                        id="upload"
+                        hidden
+                        accept="image/png, image/jpeg"
+                        onChange={handleFileChange}
+                      />
                     </label>
                     <p className="text-muted mb-0">JPG ou PNG. Tamanho máximo: 800KB</p>
                   </div>
@@ -143,6 +157,7 @@ export default function SettingsMedical() {
               </div>
 
               <hr className="my-0" />
+
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
                   <div className="row">
@@ -155,7 +170,14 @@ export default function SettingsMedical() {
                     ].map(({ label, name, type, value }) => (
                       <div className="mb-3 col-md-6" key={name}>
                         <label htmlFor={name} className="form-label">{label}</label>
-                        <input className="form-control" type={type} id={name} name={name} value={value || ""} onChange={handleChange} />
+                        <input
+                          className="form-control"
+                          type={type}
+                          id={name}
+                          name={name}
+                          value={value || ""}
+                          onChange={handleChange}
+                        />
                       </div>
                     ))}
                   </div>
@@ -167,6 +189,28 @@ export default function SettingsMedical() {
                 </form>
               </div>
             </div>
+
+            <div className="card">
+              <h5 className="card-header">Excluir conta</h5>
+              <div className="card-body">
+                <div className="mb-3 col-12 mb-0">
+                  <div className="alert alert-warning">
+                    <h6 className="alert-heading fw-bold mb-1">Tem certeza de que deseja excluir sua conta?</h6>
+                    <p className="mb-0">Depois que você excluir sua conta, não há como voltar atrás. Por favor, tenha certeza.</p>
+                  </div>
+                </div>
+                <form onSubmit={handleDeactivateAccount}>
+                  <div className="form-check mb-3">
+                    <input className="form-check-input" type="checkbox" id="accountActivation" name="accountDeactivation" checked={formData.accountDeactivation} onChange={handleChange} />
+                    <label className="form-check-label" htmlFor="accountActivation">
+                      Confirmo a desativação da minha conta
+                    </label>
+                  </div>
+                  <button type="submit" className="btn btn-danger deactivate-account">Desativar conta</button>
+                </form>
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>

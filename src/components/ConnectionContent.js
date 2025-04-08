@@ -64,9 +64,9 @@ const ConnectionContent = () => {
   const handleDataReceived = (event) => {
     const value = event.target.value;
     const decoder = new TextDecoder("utf-8");
-    const decodedValue = decoder.decode(value).trim(); // Remove espaços extras
+    const decodedValue = decoder.decode(value).trim();
 
-    console.log("Valor recebido:", decodedValue); // Debug no Console
+    console.log("Valor recebido:", decodedValue); 
 
     const percentualRecebido = parseFloat(decodedValue);
 
@@ -80,16 +80,20 @@ const ConnectionContent = () => {
     setIsConnected(false);
     setBluetoothDevice(null);
     setBluetoothCharacteristic(null);
-    toast.error("Goniômetro desconectado inesperadamente", { position: "top-right", autoClose: 3000, transition: Slide });
   };
 
   const data = {
     datasets: [
       {
         data: [percentual, 100 - percentual],
-        backgroundColor: ["#00cfe8", "#f1f1f1"],
+        backgroundColor: ["#696cff", "#f1f1f1"],
       },
     ],
+  };
+
+  const options = {
+    responsive: false,
+    maintainAspectRatio: false
   };
 
   return (
@@ -105,7 +109,12 @@ const ConnectionContent = () => {
             </ul>
             <div className="card">
               <div className="card-body text-center">
-                <Doughnut data={data} />
+                <Doughnut 
+                data={data} 
+                options={options} 
+                width={250} 
+                height={250}
+                style={{ display: 'block', margin: '0 auto' }} />
                 <div className="fw-semibold pt-3">
                   A sua limitação funcional é {percentual}%
                 </div>

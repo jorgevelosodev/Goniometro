@@ -5,10 +5,15 @@ import Navbar from "../components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import withAuth from "../utils/withAuth"; // Importando o HOC
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+// Registra os elementos do Chart.js
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function Dashboard() {
   const [tipoUsuario, setTipoUsuario] = useState(null);
   const [usuario, setUsuario] = useState(null);
+  const [percentual, setPercentual] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -20,6 +25,20 @@ function Dashboard() {
       setTipoUsuario(userData.nivelacesso);
     }
   }, []);
+
+  const data = {
+    datasets: [
+      {
+        data: [percentual, 100 - percentual],
+        backgroundColor: ["#696cff", "#f1f1f1"],
+      },
+    ],
+  };
+
+  const options = {
+    responsive: false,
+    maintainAspectRatio: false
+  };
 
   return (
     <>
@@ -93,10 +112,17 @@ function Dashboard() {
                           )}
                         </div>
 
-                        <div className="text-center" style={{ marginRight: "45%", marginTop: "2%", paddingBottom: "4%" }}>
-                          {isClient ? <div id="growthChart"></div> : <p>Carregando...</p>}
-                          <div className="fw-semibold pt-3 mb-2">A sua limitação funcional está a 78%</div>
-                        </div>
+                        <div className="card-body text-center">
+                                        <Doughnut 
+                                        data={data} 
+                                        options={options} 
+                                        width={250} 
+                                        height={250}
+                                        style={{ display: 'block', margin: '0 auto' }} />
+                                        <div className="fw-semibold pt-3">
+                                          A sua ultima limitação funcional medida é {percentual}%
+                                        </div>
+                                      </div>
                       </div>
                     </div>
                   </div>
