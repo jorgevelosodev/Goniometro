@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
+import { supabase } from "../lib/supabase"; // Importando o cliente Supabase
 import withAuth from "../utils/withAuth"; // Importando o HOC
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -16,13 +17,30 @@ function Dashboard() {
   const [percentual, setPercentual] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
+
   useEffect(() => {
     setIsClient(true);
     const userData = JSON.parse(localStorage.getItem("usuario"));
     setUsuario(userData);
-    
+  
     if (userData) {
       setTipoUsuario(userData.nivelacesso);
+  
+      // Se for paciente, busca o percentual no Supabase
+      if (userData.nivelacesso === "paciente") {
+        supabase
+          .from("pacientes")
+          .select("percentual")
+          .eq("id", userData.id)
+          .single()
+          .then(({ data, error }) => {
+            if (error) {
+              console.error("Erro ao buscar percentual:", error);
+            } else if (data) {
+              setPercentual(data.percentual);
+            }
+          });
+      }
     }
   }, []);
 
@@ -76,8 +94,10 @@ function Dashboard() {
                   <div className="col-12 col-lg-12 order-2 mb-4">
                     <div className="card">
                       <div className="row row-bordered g-0" style={{ marginTop: "40px" }}>
-                        <div className="row">
-                          {/* Opções comuns para médicos e pacientes */}
+                        <div className="row" style={{ paddingBottom: "30px" }}>
+                          
+                          {/* Opções exclusivas para Paciente 
+                          {tipoUsuario && tipoUsuario === "paciente" && (
                           <div className="col-md-4">
                             <div className="card text-center">
                               <div className="card-body">
@@ -87,7 +107,11 @@ function Dashboard() {
                               </div>
                             </div>
                           </div>
+                          */}
 
+                          {/* Opções exclusivas para Médicos */}
+                          {tipoUsuario && tipoUsuario === "medico" && (
+                            <>
                           <div className="col-md-4">
                             <div className="card text-center">
                               <div className="card-body">
@@ -98,8 +122,7 @@ function Dashboard() {
                             </div>
                           </div>
 
-                          {/* Opções exclusivas para Médicos */}
-                          {tipoUsuario && tipoUsuario === "medico" && (
+                          
                             <div className="col-md-4">
                               <div className="card text-center">
                                 <div className="card-body">
@@ -109,9 +132,10 @@ function Dashboard() {
                                 </div>
                               </div>
                             </div>
+                            </>
                           )}
                         </div>
-
+                        {tipoUsuario && tipoUsuario === "paciente" && (
                         <div className="card-body text-center">
                                         <Doughnut 
                                         data={data} 
@@ -120,9 +144,10 @@ function Dashboard() {
                                         height={250}
                                         style={{ display: 'block', margin: '0 auto' }} />
                                         <div className="fw-semibold pt-3">
-                                          A sua ultima limitação funcional medida é {percentual}%
+                                          A sua ultima limitação funcional medida foi {percentual}°
                                         </div>
                                       </div>
+                        )}
                       </div>
                     </div>
                   </div>

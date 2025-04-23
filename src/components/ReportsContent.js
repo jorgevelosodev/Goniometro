@@ -1,87 +1,157 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const ReportsContent = () => {
-  // Estado para armazenar os relatórios
-  const [reports, setReports] = useState([
-    { id: 1, name: "Jorge Veloso", date: "2025-03-30", time: "14:30", angulo: "78°", link: "/reports/financeiro.pdf" },
-    { id: 2, name: "Luchazes", date: "2025-03-28", time: "10:15", angulo: "72°", link: "/reports/vendas.pdf" },
-    { id: 3, name: "Pedro", date: "2025-03-27", time: "09:45", angulo: "70°", link: "/reports/clientes.pdf" },
-  ]);
+  const [pacientes, setPacientes] = useState([]);
 
-  // Função para deletar um relatório pelo ID
-  const handleDeleteReport = (id) => {
-    setReports(reports.filter((report) => report.id !== id));
+  useEffect(() => {
+    const fetchPacientes = async () => {
+      const medicoLogado = JSON.parse(localStorage.getItem("usuario"));
+
+      if (!medicoLogado?.id) return;
+
+      try {
+        const { data, error } = await supabase
+  .from("pacientes")
+  .select("id, nome, data_desconexao, hora_desconexao, historico, idade, percentual")
+  .eq("medico_id", medicoLogado.id)
+  .not("percentual", "is", null);
+
+        if (error) throw error;
+
+        setPacientes(data);
+      } catch (error) {
+        console.error("Erro ao buscar pacientes:", error);
+      }
+    };
+
+    fetchPacientes();
+  }, []);
+
+  const gerarPDF = (paciente) => {
+    const medico = JSON.parse(localStorage.getItem("usuario"));
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    const larguraPagina = doc.internal.pageSize.getWidth();
+
+    // Título
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("RELATÓRIO DO PACIENTE", larguraPagina / 2, 40, { align: "center" });
+
+    // Tabela com dados do paciente
+    doc.setTextColor("#000");
+    doc.setFont("helvetica", "normal");
+    autoTable(doc, {
+      startY: 50,
+      styles: {
+        font: "helvetica",
+        fontSize: 12,
+        halign: "center",
+      },
+      headStyles: {
+        fillColor: "#f3e5f5",
+        textColor: "#6A1B9A",
+        fontStyle: "bold",
+      },
+      columnStyles: {
+        0: { halign: "left" },
+        1: { halign: "right" },
+      },
+      body: [
+        ["Paciente", paciente.nome],
+        ["Histórico Médico", paciente.historico || "—"],
+        ["Idade", paciente.idade || "—"],
+        ["Data", paciente.data_desconexao || "—"],
+        ["Hora", paciente.hora_desconexao || "—"],
+      ],
+      theme: "grid",
+      margin: { left: 30, right: 30 },
+    });
+
+    // Texto de limitação funcional
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("A limitação funcional é de:", larguraPagina / 2, doc.lastAutoTable.finalY + 20, { align: "center" });
+
+    doc.setFontSize(20);
+    doc.text(`${paciente.percentual ?? 0}º`, larguraPagina / 2, doc.lastAutoTable.finalY + 33, { align: "center" });
+
+    // Assinatura
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor("#000");
+    doc.setFontSize(12);
+    doc.text("Atendido por:", larguraPagina / 2, doc.lastAutoTable.finalY + 60, { align: "center" });
+
+    doc.setFont("helvetica", "bold");
+    doc.text(medico?.nome || "Médico não identificado", larguraPagina / 2, doc.lastAutoTable.finalY + 68, { align: "center" });
+
+    doc.save(`Relatorio_${paciente.nome}.pdf`);
   };
 
   return (
     <div className="content-wrapper">
-      {/* Content */}
       <div className="container-xxl flex-grow-1 container-p-y">
         <div className="row">
           <div className="col-md-12">
             <ul className="nav nav-pills flex-column flex-md-row mb-3">
               <li className="nav-item">
-                <a className="nav-link active" style={{ cursor: "default" }} href="#">
+                <a className="nav-link active" style={{ cursor: "default" }}>
                   <i className="bx bx-bell me-1"></i> Relatórios
                 </a>
               </li>
             </ul>
             <div className="card">
-              {/* Título */}
               <h5 className="card-header">Relatórios Disponíveis</h5>
-
-              {/* Tabela de Relatórios */}
               <div className="table-responsive">
                 <table className="table table-striped table-borderless border-bottom">
                   <thead>
                     <tr>
-                      <th className="text-nowrap">Paciente</th>
-                      <th className="text-nowrap text-center">Data</th>
-                      <th className="text-nowrap text-center">Hora</th>
-                      <th className="text-nowrap text-center">Angulo</th>
-                      <th className="text-nowrap text-center">Baixar</th>
-                      <th className="text-nowrap text-center">Ações</th>
+                      <th>Paciente</th>
+                      <th className="text-center">Data</th>
+                      <th className="text-center">Hora</th>
+                      <th className="text-center">Ângulo</th>
+                      <th className="text-center">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {reports.map((report) => (
-                      <tr key={report.id}>
-                        <td>{report.name}</td>
-                        <td className="text-center">{report.date}</td>
-                        <td className="text-center">{report.time}</td>
-                        <td className="text-center">{report.angulo}</td>
-                        <td className="text-center">
-                          <a href={report.link} download className="btn btn-sm btn-primary">
-                            Baixar pdf
-                          </a>
-                        </td>
-                        <td className="text-center">
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDeleteReport(report.id)}
-                          >
-                            Excluir
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                    {reports.length === 0 && (
+                    {pacientes.length === 0 ? (
                       <tr>
-                        <td colSpan="6" className="text-center text-muted">
-                          Nenhum relatório disponível.
+                        <td colSpan={5} className="text-center">
+                          Nenhum relatório encontrado.
                         </td>
                       </tr>
+                    ) : (
+                      pacientes.map((paciente) => (
+                        <tr key={paciente.id}>
+                          <td>{paciente.nome}</td>
+                          <td className="text-center">{paciente.data_desconexao || "—"}</td>
+                          <td className="text-center">{paciente.hora_desconexao || "—"}</td>
+                          <td className="text-center">{paciente.percentual ?? "—"}º</td>
+                          <td className="text-center">
+                            <button
+                              className="btn btn-sm btn-primary"
+                              onClick={() => gerarPDF(paciente)}
+                            >
+                              Baixar PDF
+                            </button>
+                          </td>
+                        </tr>
+                      ))
                     )}
                   </tbody>
                 </table>
               </div>
-
             </div>
           </div>
         </div>
       </div>
-      {/* /Content */}
-      <div className="content-backdrop fade"></div>
     </div>
   );
 };

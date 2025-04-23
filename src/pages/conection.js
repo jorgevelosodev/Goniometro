@@ -5,6 +5,7 @@ import ConnectionContent from "../components/ConnectionContent";
 import withAuth from "../utils/withAuth";
 
 function Conection() {
+  
   return (
     <>
       <Head>

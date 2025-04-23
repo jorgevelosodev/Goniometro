@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { supabase } from "../lib/supabase"; 
 import { ToastContainer, toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -12,6 +13,28 @@ const ConnectionContent = () => {
   const [percentual, setPercentual] = useState(0);
   const [bluetoothDevice, setBluetoothDevice] = useState(null);
   const [bluetoothCharacteristic, setBluetoothCharacteristic] = useState(null);
+  const [pacientes, setPacientes] = useState([]);
+  const [pacienteSelecionado, setPacienteSelecionado] = useState("");
+
+
+  useEffect(() => {
+    const medicoLogado = JSON.parse(localStorage.getItem("usuario"));
+    if (medicoLogado?.id) {
+      supabase
+        .from("pacientes")
+        .select("id, nome")
+        .eq("medico_id", medicoLogado.id)
+        .then(({ data, error }) => {
+          if (error) {
+            console.error("Erro ao buscar pacientes:", error);
+            toast.error("Erro ao buscar pacientes");
+          } else {
+            setPacientes(data);
+          }
+        });
+    }
+  }, []);
+
 
   useEffect(() => {
     if (isConnected && bluetoothCharacteristic) {
@@ -25,6 +48,12 @@ const ConnectionContent = () => {
   }, [isConnected, bluetoothCharacteristic]);
 
   const connectBluetooth = async () => {
+
+    if (!pacienteSelecionado) {
+      toast.warn("Selecione um paciente antes de conectar.");
+      return;
+    }
+
     try {
       const device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
@@ -51,12 +80,32 @@ const ConnectionContent = () => {
     }
   };
 
-  const disconnectBluetooth = () => {
+  const disconnectBluetooth = async () => {
     if (bluetoothDevice && bluetoothDevice.gatt.connected) {
       bluetoothDevice.gatt.disconnect();
       setIsConnected(false);
       setBluetoothDevice(null);
       setBluetoothCharacteristic(null);
+
+      // Obter a data e hora atual
+    const now = new Date();
+    const dataDesconexao = now.toISOString().split('T')[0]; // Formato AAAA-MM-DD
+    const horaDesconexao = now.toTimeString().substring(0, 8); // Formato HH:MM:SS
+
+      // Salvar o percentual no paciente selecionado
+    const { error } = await supabase
+    .from("pacientes")
+    .update({ percentual,
+      data_desconexao: dataDesconexao,
+      hora_desconexao: horaDesconexao})
+    .eq("id", pacienteSelecionado);
+
+  if (error) {
+    console.error("Erro ao salvar percentual:", error);
+    toast.error("Erro ao salvar o percentual!");
+  } else {
+  
+  }
       toast.error("Goniômetro desconectado", { position: "top-right", autoClose: 3000, transition: Slide });
     }
   };
@@ -106,6 +155,19 @@ const ConnectionContent = () => {
               <li className="nav-item">
                 <a className="nav-link active"><i className="bx bx-cube-alt"></i> Conexão</a>
               </li>
+              <div className="mb-3" style={{ marginLeft: "auto" }}>
+        <label className="form-label">Selecione o Paciente</label>
+        <select
+          className="form-select"
+          value={pacienteSelecionado}
+          onChange={(e) => setPacienteSelecionado(e.target.value)}
+        >
+          <option value="" disabled>-- Selecione --</option>
+          {pacientes.map((p) => (
+            <option key={p.id} value={p.id}>{p.nome}</option>
+          ))}
+        </select>
+      </div>
             </ul>
             <div className="card">
               <div className="card-body text-center">
@@ -116,7 +178,7 @@ const ConnectionContent = () => {
                 height={250}
                 style={{ display: 'block', margin: '0 auto' }} />
                 <div className="fw-semibold pt-3">
-                  A sua limitação funcional é {percentual}%
+                  A sua limitação funcional é {percentual}°
                 </div>
                 <button
                   className={`btn ${isConnected ? "btn-danger" : "btn-primary"} mt-3`}

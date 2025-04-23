@@ -1,14 +1,40 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { supabase } from "../lib/supabase";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [usuario, setUsuario] = useState(null);
+  const [fotoUrl, setFotoUrl] = useState(null);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("usuario"));
     setUsuario(userData);
+  
+    if (userData?.foto) {
+      const { data } = supabase.storage.from("imagens").getPublicUrl(userData.foto);
+      setFotoUrl(data?.publicUrl);
+    }
+
+    const syncUserFoto = () => {
+      const userData = JSON.parse(localStorage.getItem("usuario"));
+      setUsuario(userData);
+      if (userData?.foto) {
+        const { data } = supabase.storage.from("imagens").getPublicUrl(userData.foto);
+        setFotoUrl(data?.publicUrl);
+      }
+    };
+  
+    syncUserFoto();
+  
+    window.addEventListener("storage", syncUserFoto);
+  
+    return () => {
+      window.removeEventListener("storage", syncUserFoto);
+    };
+
   }, []);
+
 
   const handleLogout = () => {
     localStorage.removeItem("usuario");
@@ -24,7 +50,13 @@ export default function Navbar() {
 
         {/* Avatar clicável */}
         <div className="avatar avatar-online" onClick={() => setIsDropdownOpen(!isDropdownOpen)} style={{ cursor: "pointer" }}>
-          <Image src="/assets/img/avatars/1.png" alt="User" width={40} height={40} className="rounded-circle" />
+        <img
+          src={fotoUrl || "../assets/img/avatars/1.png"}
+          alt="User"
+          width={40}
+          height={40}
+          className="rounded-circle"
+          />
 
           {/* Dropdown */}
           <li className={`nav-item navbar-dropdown dropdown-user dropdown ${isDropdownOpen ? "show" : ""}`} style={{ position: "relative" }}>
@@ -34,7 +66,13 @@ export default function Navbar() {
                   <div className="d-flex">
                     <div className="flex-shrink-0 me-3">
                       <div className="avatar avatar-online">
-                        <Image src="/assets/img/avatars/1.png" alt="User" width={40} height={40} className="rounded-circle" />
+                      <img
+          src={fotoUrl || "../assets/img/avatars/1.png"}
+          alt="User"
+          width={40}
+          height={40}
+          className="rounded-circle"
+          />
                       </div>
                     </div>
                     <div className="flex-grow-1">

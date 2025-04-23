@@ -4,7 +4,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function SettingsMedical() {
-  const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [userId, setUserId] = useState(null);
   const [formData, setFormData] = useState({
@@ -78,6 +77,9 @@ export default function SettingsMedical() {
       setFormData((prev) => ({ ...prev, foto: filePath }));
     }
 
+    const updatedUser = { ...JSON.parse(localStorage.getItem("usuario")), foto: filePath };
+    localStorage.setItem("usuario", JSON.stringify(updatedUser));
+
     setUploading(false);
   };
 
@@ -99,6 +101,15 @@ export default function SettingsMedical() {
       console.error(error);
     } else {
       toast.success("Perfil atualizado com sucesso!");
+      const updatedUser = {
+        ...JSON.parse(localStorage.getItem("usuario")),
+        nome: formData.nome,
+        email: formData.email,
+        especialidade: formData.especialidade,
+        telefone: formData.telefone,
+        clinicAddress: formData.clinicAddress,
+      };
+      localStorage.setItem("usuario", JSON.stringify(updatedUser));
     }
   };
 

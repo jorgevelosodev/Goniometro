@@ -37,6 +37,9 @@ export default function Sidebar() {
           <span className="menu-header-text">Menu</span>
         </li>
 
+      {/* Opções para médicos */}
+      {usuario.nivelacesso === "medico" && (
+          <>
         <li className={isActive("/conection")}>
           <Link href="/conection" className="menu-link">
             <i className="menu-icon tf-icons bx bx-cube-alt"></i>
@@ -44,9 +47,7 @@ export default function Sidebar() {
           </Link>
         </li>
 
-        {/* Opções para médicos */}
-        {usuario.nivelacesso === "medico" && (
-          <>
+
             <li className={isActive("/doctor/reports")}>
               <Link href="/doctor/reports" className="menu-link">
                 <i className="menu-icon tf-icons bx bx-bell me-1"></i>
