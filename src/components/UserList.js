@@ -67,7 +67,7 @@ export default function UserList() {
         setPacientes((prevPacientes) =>
           prevPacientes.filter((paciente) => paciente.id !== id)
         );
-        toast.success("Paciente excluídos com sucesso!");
+        toast.success("Paciente excluído com sucesso!");
       }
     } catch (error) {
       console.error("Erro ao excluir:", error);

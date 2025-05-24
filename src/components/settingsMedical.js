@@ -124,7 +124,7 @@ export default function SettingsMedical() {
 
   const fotoUrl = formData.foto
     ? supabase.storage.from("imagens").getPublicUrl(formData.foto).data.publicUrl
-    : "../assets/img/avatars/1.png";
+    : "../assets/img/avatars/foto-padrao.jpg";
 
   return (
     <div className="content-wrapper">

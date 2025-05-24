@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import Services from "@/components/Services";
-import FAQ from "@/components/FAQ";
-import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
 import('../../public/assets/css/main.css')
 import('../../public/assets/css/demo.css')

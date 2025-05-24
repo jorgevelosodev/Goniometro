@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState, useCallback } from "react";
 import { supabase } from "../../lib/supabase";
+import { sendRegistrationEmail } from "../../lib/email";
 import bcrypt from "bcryptjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -99,6 +100,13 @@ function RegisterPatient() {
         console.error("Erro ao inserir na tabela pacientes:", pacienteError);
         toast.error("Erro ao cadastrar paciente na tabela de pacientes!");
         return;
+      }
+
+      try {
+            await sendRegistrationEmail(formData.email, formData.nome, formData.senha);
+      } catch (emailError) {
+            console.error("Erro ao enviar e-mail de boas-vindas:", emailError);
+            toast.warn("Paciente cadastrado, mas não foi possível enviar o e-mail.");
       }
 
       toast.success("Paciente cadastrado com sucesso!");

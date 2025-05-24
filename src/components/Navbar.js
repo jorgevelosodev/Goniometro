@@ -51,7 +51,7 @@ export default function Navbar() {
         {/* Avatar clicável */}
         <div className="avatar avatar-online" onClick={() => setIsDropdownOpen(!isDropdownOpen)} style={{ cursor: "pointer" }}>
         <img
-          src={fotoUrl || "../assets/img/avatars/1.png"}
+          src={fotoUrl || "../assets/img/avatars/foto-padrao.jpg"}
           alt="User"
           width={40}
           height={40}
@@ -67,7 +67,7 @@ export default function Navbar() {
                     <div className="flex-shrink-0 me-3">
                       <div className="avatar avatar-online">
                       <img
-          src={fotoUrl || "../assets/img/avatars/1.png"}
+          src={fotoUrl || "../assets/img/avatars/foto-padrao.jpg"}
           alt="User"
           width={40}
           height={40}

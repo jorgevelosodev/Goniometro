@@ -20,6 +20,9 @@ export default function Login() {
       .select("*") // Buscar TODOS os dados do usuário
       .eq("email", email)
       .single();
+
+      //console.log("Usuário buscado:", data);
+      //console.log("Erro (se houver):", error);
   
     if (error || !data) {
       toast.error("Email ou senha incorretos!", { position: "top-right" });
@@ -38,7 +41,7 @@ export default function Login() {
     toast.success("Login bem-sucedido!", { position: "top-right" });
   
     // Remover a senha antes de salvar no localStorage
-    const { senha, ...dadosUsuario } = data;
+    const { ...dadosUsuario } = data;
     localStorage.setItem("usuario", JSON.stringify(dadosUsuario));
   
     setTimeout(() => {
@@ -88,7 +91,7 @@ export default function Login() {
                   <div className="mb-3 form-password-toggle">
                     <div className="d-flex justify-content-between">
                       <label className="form-label" htmlFor="password">Senha</label>
-                      <Link href="/auth/forgot-password">
+                      <Link href="/forgot-password">
                         <small>Esqueceu a senha?</small>
                       </Link>
                     </div>
