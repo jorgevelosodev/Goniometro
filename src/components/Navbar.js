@@ -38,7 +38,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("usuario");
-    window.location.href = "/login"; // Redireciona para a página de login
+    window.location.href = "/login";
   };
 
   return (
@@ -59,7 +59,7 @@ export default function Navbar() {
           />
 
           {/* Dropdown */}
-          <li className={`nav-item navbar-dropdown dropdown-user dropdown ${isDropdownOpen ? "show" : ""}`} style={{ position: "relative" }}>
+          <li className={`nav-item navbar-dropdown dropdown-user dropdown ${isDropdownOpen ? "show" : "none"}`} style={{ position: "relative" }}>
             <ul className="dropdown-menu dropdown-menu-end" style={{ display: isDropdownOpen ? "block" : "none", position: "absolute", right: 0, top: 0.5 }}>
               <li>
                 <a className="dropdown-item" href="#">

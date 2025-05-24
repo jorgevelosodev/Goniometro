@@ -6,14 +6,14 @@ import styles from '../styles/Gallery.module.css';
 
 // Imagens da galeria
 const images = [
-  { src: '/assets/img/gallery/gallery-1.jpg', alt: 'Gallery Image 1' },
+  /*{ src: '/assets/img/gallery/gallery-1.jpg', alt: 'Gallery Image 1' },
   { src: '/assets/img/gallery/gallery-2.jpg', alt: 'Gallery Image 2' },
   { src: '/assets/img/gallery/gallery-3.jpg', alt: 'Gallery Image 3' },
   { src: '/assets/img/gallery/gallery-4.jpg', alt: 'Gallery Image 4' },
   { src: '/assets/img/gallery/gallery-5.jpg', alt: 'Gallery Image 5' },
   { src: '/assets/img/gallery/gallery-6.jpg', alt: 'Gallery Image 6' },
   { src: '/assets/img/gallery/gallery-7.jpg', alt: 'Gallery Image 7' },
-  { src: '/assets/img/gallery/gallery-8.jpg', alt: 'Gallery Image 8' },
+  { src: '/assets/img/gallery/gallery-8.jpg', alt: 'Gallery Image 8' },*/
 ];
 
 export default function Gallery() {
@@ -29,7 +29,7 @@ export default function Gallery() {
       {/* Título da seção */}
       <div className="container section-title" data-aos="fade-up">
         <h2>Gallery</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+        <p></p>
       </div>
 
       <div className="container-fluid" data-aos="fade-up" data-aos-delay="100">

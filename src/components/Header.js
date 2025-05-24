@@ -22,15 +22,6 @@ export default function Header() {
                   Home
                 </Link>
               </li>
-              <li>
-                <Link 
-                  href="#services" 
-                  className={activeSection === '#services' ? 'active' : ''} 
-                  onClick={() => setActiveSection('#services')}
-                >
-                  Serviços
-                </Link>
-              </li>
             </ul>
             <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
           </nav>

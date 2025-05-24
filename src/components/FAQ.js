@@ -1,6 +1,6 @@
 export default function FAQ() {
   const faqs = [
-    {
+    /*{
       question: "Non consectetur a erat nam at lectus urna duis?",
       answer:
         "Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.",
@@ -29,14 +29,14 @@ export default function FAQ() {
       question: "Perspiciatis quod quo quos nulla quo illum ullam?",
       answer:
         "Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed in suscipit sequi. Distinctio ipsam dolore et.",
-    },
+    },*/
   ];
 
   return (
     <section id="faq" className="faq section light-background">
       <div className="container section-title" data-aos="fade-up">
         <h2>Perguntas Frequentes</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit.</p>
+        <p></p>
       </div>
       <div className="container">
         <div className="faq-container">
