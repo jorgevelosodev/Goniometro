@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function ProfileContent() {
   const [uploading, setUploading] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [fotoPath, setFotoPath] = useState(""); // Novo state para guardar o path da imagem
+  const [fotoPath, setFotoPath] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -19,11 +19,6 @@ export default function ProfileContent() {
     confirmPassword: "",
   });
 
-  const handleChange = (event) => {
-    const { name, value, type, checked } = event.target;
-    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
-  };
-
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     if (usuario) {
@@ -33,45 +28,46 @@ export default function ProfileContent() {
   }, []);
 
   const fetchUserData = async (id) => {
-    // Primeira consulta para pegar dados do usuário
     const { data: usuarioData, error: usuarioError } = await supabase
       .from("usuarios")
       .select("nome, email, foto, telefone")
       .eq("id", id)
       .single();
-  
+
     if (usuarioError) {
       toast.error("Erro ao carregar dados do usuário.");
       console.error(usuarioError);
       return;
     }
-  
-    // Segunda consulta para pegar a idade do paciente
+
     const { data: pacienteData, error: pacienteError } = await supabase
       .from("pacientes")
       .select("idade")
       .eq("id", id)
       .single();
-  
+
     if (pacienteError) {
       toast.error("Erro ao carregar dados do paciente.");
       console.error(pacienteError);
       return;
     }
-  
-    // Atualiza o estado com os dados de ambos
+
     setFormData((prev) => ({
       ...prev,
       name: usuarioData.nome || "",
       email: usuarioData.email || "",
       phoneNumber: usuarioData.telefone || "",
       foto: usuarioData.foto || "",
-      idade: pacienteData?.idade || "", // Adiciona a idade do paciente
+      idade: pacienteData?.idade || "",
     }));
-  
+
     setFotoPath(usuarioData.foto || "");
   };
-  
+
+  const handleChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -80,40 +76,50 @@ export default function ProfileContent() {
       toast.error("As senhas não coincidem!");
       return;
     }
-    const hashedPassword = await bcrypt.hash(formData.senha, 10);
+
+    const updatesPaciente = {
+      nome: formData.name,
+      email: formData.email,
+      telefone: formData.phoneNumber,
+      idade: formData.idade,
+    };
 
     const { error: pacienteError } = await supabase
       .from("pacientes")
-      .update({
-        nome: formData.name,
-        email: formData.email,
-        telefone: formData.phoneNumber,
-        idade: formData.idade,
-      })
+      .update(updatesPaciente)
       .eq("id", userId);
 
     if (pacienteError) {
       toast.error("Erro ao atualizar dados do paciente.");
+      console.error(pacienteError);
       return;
+    }
+
+    const updatesUsuario = {
+      nome: formData.name,
+      email: formData.email,
+      telefone: formData.phoneNumber,
+      foto: fotoPath,
+    };
+
+    if (formData.password) {
+      const hashedPassword = await bcrypt.hash(formData.password, 10);
+      updatesUsuario.senha = hashedPassword;
     }
 
     const { error: usuarioError } = await supabase
       .from("usuarios")
-      .update({
-        nome: formData.name,
-        email: formData.email,
-        telefone: formData.phoneNumber,
-        senha: hashedPassword,
-        foto: fotoPath,
-      })
+      .update(updatesUsuario)
       .eq("id", userId);
 
     if (usuarioError) {
       toast.error("Erro ao atualizar dados do usuário.");
+      console.error(usuarioError);
       return;
     }
 
     toast.success("Informações atualizadas com sucesso!");
+
     const updatedUser = {
       ...JSON.parse(localStorage.getItem("usuario")),
       nome: formData.name,
@@ -121,6 +127,7 @@ export default function ProfileContent() {
       telefone: formData.phoneNumber,
       foto: fotoPath,
     };
+
     localStorage.setItem("usuario", JSON.stringify(updatedUser));
   };
 
@@ -155,10 +162,13 @@ export default function ProfileContent() {
       toast.success("Imagem atualizada com sucesso!");
       setFormData((prev) => ({ ...prev, foto: filePath }));
       setFotoPath(filePath);
-    }
 
-    const updatedUser = { ...JSON.parse(localStorage.getItem("usuario")), foto: filePath };
-    localStorage.setItem("usuario", JSON.stringify(updatedUser));
+      const updatedUser = {
+        ...JSON.parse(localStorage.getItem("usuario")),
+        foto: filePath,
+      };
+      localStorage.setItem("usuario", JSON.stringify(updatedUser));
+    }
 
     setUploading(false);
   };
@@ -174,6 +184,7 @@ export default function ProfileContent() {
 
   return (
     <div className="content-wrapper">
+      <ToastContainer />
       <div className="container-xxl flex-grow-1 container-p-y">
         <div className="row">
           <div className="col-md-12">
@@ -285,16 +296,14 @@ export default function ProfileContent() {
 
                   <div className="mt-2">
                     <button type="submit" className="btn btn-primary me-2">Salvar alterações</button>
-                    <button type="reset" className="btn btn-outline-secondary">Cancelar</button>
                   </div>
                 </form>
               </div>
             </div>
+
           </div>
         </div>
       </div>
-      <div className="content-backdrop fade"></div>
-      <ToastContainer />
     </div>
   );
 }
