@@ -80,8 +80,8 @@ function Dashboard() {
                       <div className="d-flex align-items-end row" style={{ height: "164px" }}>
                         <div className="col-sm-7">
                           <div className="card-body">
-                            <h5 className="card-title text-primary">Seja Bem-vindo {usuario?.nome || "Usuário"}!</h5>
-                            <p className="mb-4">Olá, seja bem-vindo!</p>
+                            <h5 className="card-title text-primary">Seja Bem-vindo(a) {usuario?.nome || "Usuário"}!</h5>
+                            <p className="mb-4">Olá, seja bem-vindo(a)!</p>
                           </div>
                         </div>
                         <div className="col-sm-5 text-center">
@@ -144,7 +144,7 @@ function Dashboard() {
                                         height={250}
                                         style={{ display: 'block', margin: '0 auto' }} />
                                         <div className="fw-semibold pt-3">
-                                          A sua ultima limitação funcional medida foi {percentual}°
+                                          A sua última limitação funcional medida foi {percentual}°
                                         </div>
                                       </div>
                         )}

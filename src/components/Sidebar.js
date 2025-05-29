@@ -109,7 +109,7 @@ export default function Sidebar() {
               <li className={isActive("/doctor/userList")}>
                 <Link href="/doctor/userList" className="menu-link">
                   <i className="menu-icon tf-icons bx bxs-user-detail"></i>
-                  <div>Lista de Usuários</div>
+                  <div>Lista de Pacientes</div>
                 </Link>
               </li>
             </>
@@ -131,7 +131,7 @@ export default function Sidebar() {
               <li className={isActive("/admin/registerMedico")}>
                 <Link href="/admin/registerMedico" className="menu-link">
                   <i className="menu-icon tf-icons bx bx-user-plus"></i>
-                  <div>Criar Médico</div>
+                  <div>Cadastrar Médico</div>
                 </Link>
               </li>
               <li className={isActive("/admin/listAllUser")}>
