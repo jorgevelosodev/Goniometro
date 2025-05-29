@@ -103,6 +103,15 @@ export default function Navbar() {
                 </li>
               )}
 
+              {usuario?.nivelacesso === "admin" && (
+  <li>
+    <a className="dropdown-item" href="/admin/profileAdmin">
+      <i className="bx bx-user me-2"></i>
+      <span className="align-middle">Meu Perfil</span>
+    </a>
+  </li>
+)}
+
               <li>
                 <button className="dropdown-item" onClick={handleLogout}>
                   <i className="bx bx-power-off me-2"></i>

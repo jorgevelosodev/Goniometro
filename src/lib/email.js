@@ -1,15 +1,16 @@
 import emailjs from "@emailjs/browser";
 
+
 export const sendResetPasswordEmail = async (toEmail, resetLink) => {
   try {
     const result = await emailjs.send(
-      "service_nn3j623",        // ex: service_xxxxxx
-      "template_3a3vpnd",       // ex: template_reset_password
+      "service_nn3j623",
+      "template_3a3vpnd",
       {
         email: toEmail,
         link: resetLink,
       },
-      "08M4E-gCHIw8kEuwg"         // ex: public_ABC123
+      "08M4E-gCHIw8kEuwg"
     );
     return result;
   } catch (error) {
@@ -20,14 +21,14 @@ export const sendResetPasswordEmail = async (toEmail, resetLink) => {
 export const sendRegistrationEmail = async (toEmail, name, password) => {
   try {
     const result = await emailjs.send(
-      "service_nn3j623",         // seu service ID
-      "template_y0044t8", // seu novo template ID
+      "service_nn3j623",
+      "template_y0044t8",
       {
         email: toEmail,
         name,
         password,
       },
-      "08M4E-gCHIw8kEuwg"         // seu public key
+      "08M4E-gCHIw8kEuwg"
     );
     return result;
   } catch (error) {

@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 // Executa no servidor durante build/start (não no navegador)
 if (typeof window === "undefined") {
-  //initMedico();
+  initMedico();
 }
 */
 

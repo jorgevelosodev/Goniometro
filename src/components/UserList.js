@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
+const MySwal = withReactContent(Swal);
 
 export default function UserList() {
   const [pacientes, setPacientes] = useState([]);
@@ -11,7 +14,6 @@ export default function UserList() {
 
   useEffect(() => {
     async function fetchPacientes() {
-      // Evita erro no SSR
       if (typeof window === "undefined") return;
 
       try {
@@ -20,7 +22,6 @@ export default function UserList() {
         if (usuarioLogado && usuarioLogado.nivelacesso === "medico") {
           setMedicoId(usuarioLogado.id);
 
-          // Buscar pacientes vinculados ao médico logado
           const { data, error } = await supabase
             .from("pacientes")
             .select("*")
@@ -42,24 +43,22 @@ export default function UserList() {
 
   const handleDeleteUser = async (id) => {
     try {
-      // Exclui primeiro da tabela "usuarios"
       const { error: userError } = await supabase
         .from("usuarios")
         .delete()
         .eq("id", id);
-  
+
       if (userError) {
         console.error("Erro ao excluir usuário:", userError);
         toast.error("Erro ao excluir usuário. Tente novamente.");
         return;
       }
-  
-      // Agora exclui da tabela "pacientes"
+
       const { error: patientError } = await supabase
         .from("pacientes")
         .delete()
         .eq("id", id);
-  
+
       if (patientError) {
         console.error("Erro ao excluir paciente:", patientError);
         toast.error("Erro ao excluir paciente. Tente novamente.");
@@ -74,7 +73,23 @@ export default function UserList() {
       toast.error("Erro ao excluir. Tente novamente.");
     }
   };
-  
+
+  const confirmarExclusao = (paciente) => {
+    MySwal.fire({
+      title: "Tem certeza?",
+      text: `Deseja remover o paciente "${paciente.nome}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, excluir",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDeleteUser(paciente.id);
+      }
+    });
+  };
 
   return (
     <div className="content-wrapper">
@@ -106,17 +121,20 @@ export default function UserList() {
                       pacientes.map((paciente) => (
                         <tr key={paciente.id}>
                           <td className="text-center">{paciente.nome}</td>
-                          <td className="text-center">{paciente.telefone || "Não informado"}</td>
-                          <td className="text-center">{paciente.idade || "N/A"}</td>
+                          <td className="text-center">{paciente.telefone}</td>
+                          <td className="text-center">{paciente.idade}</td>
                           <td className="text-center">
-                            <Link href={`/doctor/patient/${paciente.id}`}>
-                              <button className="btn btn-sm btn-primary">Ver Detalhes</button>
+                            <Link
+                              href={`/doctor/patient/${paciente.id}`}
+                              className="btn btn-sm btn-primary"
+                            >
+                              Ver detalhes
                             </Link>
                           </td>
                           <td className="text-center">
                             <button
                               className="btn btn-sm btn-danger"
-                              onClick={() => handleDeleteUser(paciente.id)}
+                              onClick={() => confirmarExclusao(paciente)}
                             >
                               Excluir
                             </button>
@@ -126,7 +144,7 @@ export default function UserList() {
                     ) : (
                       <tr>
                         <td colSpan="5" className="text-center text-muted">
-                          Nenhum paciente vinculado.
+                          Nenhum paciente encontrado.
                         </td>
                       </tr>
                     )}
@@ -137,7 +155,6 @@ export default function UserList() {
           </div>
         </div>
       </div>
-      <div className="content-backdrop fade"></div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

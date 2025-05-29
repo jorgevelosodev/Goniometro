@@ -45,8 +45,12 @@ export default function Login() {
     localStorage.setItem("usuario", JSON.stringify(dadosUsuario));
   
     setTimeout(() => {
-      window.location.href = "/dashboard";
-    }, 2000);
+  if (dadosUsuario.nivelacesso === "admin") {
+    window.location.href = "/admin-dashboard";
+  } else {
+    window.location.href = "/dashboard";
+  }
+}, 2000);
   };
 
   return (
