@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import bcrypt from "bcryptjs";
+import { sendRegistrationEmail } from "../../lib/email";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import withAuth from "../../utils/withAuth";
@@ -51,6 +52,13 @@ function RegisterMedico() {
         toast.error("Erro ao cadastrar médico!");
         return;
       }
+
+      try {
+                  await sendRegistrationEmail(formData.email, formData.nome, formData.senha);
+            } catch (emailError) {
+                  console.error("Erro ao enviar e-mail de boas-vindas:", emailError);
+                  toast.warn("Médocp cadastrado, mas não foi possível enviar o e-mail.");
+            }
 
       toast.success("Médico cadastrado com sucesso!");
       setFormData({
